@@ -1,6 +1,7 @@
 from Adafruit_IO import Client
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
+import numpy as np
 
 # for plotting
 import matplotlib.pyplot as plt
@@ -41,46 +42,57 @@ temperature_created = pd.read_json(
 # Data visualization
 
 # Line
+# Dual-axis chart
 fig, ax1 = plt.subplots(figsize=(32, 16))
 
 color = "tab:blue"
-ax1.set_xlabel("Time", fontsize=32)
-ax1.set_ylabel("Humidity", color=color, fontsize=32)
+ax1.set_xlabel("Time")
+ax1.set_ylabel("Humidity", color=color)
 ax1.plot(humidity_created, humidity, color=color)
-ax1.tick_params(axis="y", labelcolor=color, labelsize=32)
+ax1.tick_params(axis="y", labelcolor=color)
 plt.xticks(rotation=90)
 
 ax2 = ax1.twinx()
 
 color = "tab:red"
-ax2.set_ylabel("Temperature", color=color, fontsize=32)
+ax2.set_ylabel("Temperature", color=color)
 ax2.plot(humidity_created, temperature, color=color)
-ax2.tick_params(axis="y", labelcolor=color, labelsize=32)
-plt.title("Temperature And Humimidy Data Over Time", fontsize=32)
-fig.legend(["Humidity", "Temperature"], loc="upper right", fontsize=32)
+ax2.tick_params(axis="y", labelcolor=color)
+plt.title("Temperature And Humimidy Data Over Time")
+fig.legend(["Humidity", "Temperature"], loc="upper right")
 plt.xticks(rotation=90)
 plt.grid(True)
 plt.show()
 
-# Scatter
-plt.figure(figsize=(24, 8))
-plt.scatter(humidity_created, temperature, color="red")
-plt.xlabel("Time", fontsize=32)
-plt.ylabel("Temperature", fontsize=32)
-plt.title("Temperature Data Over Time", fontsize=32)
-plt.xticks(rotation=90)
-plt.yticks(fontsize=24)
-plt.plot(humidity_created, temperature, color="blue", ls="--")
+plt.fill_between(humidity_created, temperature, color="red", alpha=0.2)
+plt.plot(humidity_created, temperature, color="red")
+plt.ylim(min(temperature) - 1, max(temperature) + 1)
+# set chart title and axis labels
+plt.title("Temperature over Time")
+plt.xlabel("Time")
+plt.ylabel("Temperature")
+plt.xticks(range(0, len(humidity_created), 4), rotation=90, fontsize=8)
+plt.show()
+# ------------
+plt.fill_between(humidity_created, humidity, color="blue", alpha=0.2)
+plt.plot(humidity_created, humidity, color="blue")
+plt.ylim(min(humidity) - 1, max(humidity) + 1)
+# set chart title and axis labels
+plt.title("Humidity over Time")
+plt.xlabel("Time")
+plt.ylabel("Humidity")
+plt.xticks(range(0, len(humidity_created), 4), rotation=90, fontsize=8)
 plt.show()
 
-plt.figure(figsize=(24, 8))
-plt.scatter(humidity_created, humidity, color="blue", linestyle=":")
-plt.xlabel("Time", fontsize=32)
-plt.ylabel("Humidity", fontsize=32)
-plt.title("Humidity Data Over Time", fontsize=32)
+# Scatter
+plt.figure()
+plt.scatter(humidity, temperature, color="red")
+plt.xlabel("Humidity")
+plt.ylabel("Temperature")
+plt.title("Temp and Humid against each other")
 plt.xticks(rotation=90)
 plt.yticks(fontsize=24)
-plt.plot(humidity_created, humidity, color="red", ls="--")
+plt.plot(humidity, temperature, color="blue", ls="--")
 plt.show()
 
 # Statistical analysis
