@@ -100,6 +100,93 @@ def landing():
     scatter_html = f'<img src="data:image/png;base64,{scatter}">'
     buffer.truncate(0)
 
+    # Statistical analysis
+    # Mean
+    mean_temperature = temperature.mean()
+    mean_humidity = humidity.mean()
+
+    # Median
+    median_temperature = temperature.median()
+    median_humidity = humidity.median()
+
+    # Standard Deviation
+    temperature_std = temperature.std()
+    humidity_std = humidity.std()
+
+    # Central tendency
+    if abs(mean_temperature - median_temperature) < 0.1 * temperature_std:
+        central_tendency_temp = "Temperature data is normally distributed"
+    elif mean_temperature > median_temperature:
+        central_tendency_temp = "Temperature data is positively skewed"
+    else:
+        central_tendency_temp = "Temperature data is negatively skewed"
+
+    if abs(mean_humidity - median_humidity) < 0.1 * humidity_std:
+        central_tendency_humi = "Humidity data is normally distributed"
+    elif mean_humidity > median_humidity:
+        central_tendency_humi = "Humidity data is positively skewed"
+    else:
+        central_tendency_humi = "Humidity data is negatively skewed"
+
+    mean_temperature = f'<p>{mean_temperature}</p>'
+    mean_humidity = f'<p>{mean_humidity}</p>'
+    median_temperature = f'<p>{median_temperature}</p>'
+    median_humidity = f'<p>{median_humidity}</p>'
+    temperature_std = f'<p>{temperature_std}</p>'
+    humidity_std = f'<p>{humidity_std}</p>'
+    central_tendency_temp = '<p>Temperature data is negatively skewed</p>'
+    central_tendency_humi = '<p>Humidity data is negatively skewed</p>'
+
+    # Combine the data into a single dataframe
+    data = pd.concat([temperature, humidity], axis=1)
+    data.columns = ["temperature", "humidity"]
+
+    # Split the data into training and testing sets
+    train_size = int(len(data) * 0.8)
+    train_data = data.iloc[:train_size, :]
+    test_data = data.iloc[train_size:, :]
+
+    # Normalize the data
+    mean = train_data.mean()
+    std = train_data.std()
+    train_data = (train_data - mean) / std
+    test_data = (test_data - mean) / std
+
+    # Prepare the data for LSTM
+    def prepare_data(data, look_back=1):
+        X, y = [], []
+        for i in range(len(data) - look_back - 1):
+            X.append(data[i : (i + look_back), :])
+            y.append(data[i + look_back, :])
+        return np.array(X), np.array(y)
+
+    look_back = 10
+    train_X, train_y = prepare_data(train_data.values, look_back)
+    test_X, test_y = prepare_data(test_data.values, look_back)
+
+    # Build the LSTM model
+    model = Sequential()
+    model.add(LSTM(50, input_shape=(look_back, 2)))
+    model.add(Dense(2))
+    model.compile(loss="mean_squared_error", optimizer="adam")
+
+    # Train the model
+    model.fit(train_X, train_y, epochs=100, batch_size=32, verbose=2)
+
+    # Make predictions on the test data
+    test_predict = model.predict(test_X)
+
+    # Inverse transform the predictions and actual values
+    test_predict = (test_predict * std.values) + mean.values
+    test_y = (test_y * std.values) + mean.values
+
+    # Select the best predicted value for temperature and humidity
+    best_predict = test_predict[-1, :]
+    best_predict_temperature = str(best_predict[0])
+    best_predict_humidity = str(best_predict[1])
+    best_predict_temperature = f'<p style="color: darkred">{best_predict_temperature}</p>'
+    best_predict_humidity = f'<p style="color: darkblue">{best_predict_humidity}</p>'
+
     html = (
         """
     <html lang="en">
@@ -306,16 +393,16 @@ def landing():
             <h4>Scatter Plot</h4>
             """+scatter_html+"""
             <h4>Mean value</h4>
-            <p>25.261999999999997</p>
+            """+mean_temperature+"""
             <h4>Median value</h4>
-            <p>25.5</p>
+            """+median_temperature+"""
             <h4>Standard Deviation value</h4>
-            <p>0.7290203749352323</p>
+            """+temperature_std+"""
             <h4>Central Tendency</h4>
-            <p>Temperature data is negatively skewed</p>
+            """+central_tendency_temp+"""
             <hr />
             <h3>Predicted Future value</h3>
-            <p style="color: darkred">24.03074850807415</p>
+            """+best_predict_temperature+"""
           </div>
           <div id="ada_humid" class="mainBox">
             <h2>Humidity</h2>
@@ -326,16 +413,16 @@ def landing():
             <h4>Scatter Plot</h4>
             """+scatter_html+"""
             <h4>Mean value</h4>
-            <p>57.423999999999985</p>
+            """+mean_humidity+"""
             <h4>Median value</h4>
-            <p>59.25</p>
+            """+median_humidity+"""
             <h4>Standard Deviation value</h4>
-            <p>3.800162675943802</p>
+            """+humidity_std+"""
             <h4>Central Tendency</h4>
-            <p>Humidity data is negatively skewed</p>
+            """+central_tendency_humi+"""
             <hr />
             <h3>Predicted Future value</h3>
-            <p style="color: darkblue">61.14312981678343</p>
+            """+best_predict_humidity+"""
           </div>
         </main>
         <footer>
