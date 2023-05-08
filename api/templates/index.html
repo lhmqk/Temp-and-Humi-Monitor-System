@@ -1,0 +1,548 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WinnerX District10 Brother Club</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
+    <style>
+      .button {
+        background-color: #8a8a8a;
+        width: fit-content;
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: #f9f9f9;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      p {
+        margin: 8px 0px;
+      }
+
+      h4 {
+        margin: 16px 0px 8px 0px;
+      }
+
+      body {
+        background-color: #121212;
+        margin: 0px;
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        grid-template-rows: 1fr;
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+      }
+      body > div:nth-child(2) {
+        margin: 0px;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        grid-column-gap: 0px;
+        grid-row-gap: 0px;
+        font-family: "Ubuntu", sans-serif;
+      }
+      @media only screen and (max-width: 767px) {
+        body {
+          grid-template-columns: 0 1fr 0;
+        }
+      }
+      header {
+        background-color: #ffffff;
+        width: calc(50% - 64px);
+        padding: 16px 32px;
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: 1fr;
+        grid-column-gap: 16px;
+        grid-row-gap: 0px;
+        align-items: center;
+        border-bottom: 1px solid black;
+        position: fixed;
+        z-index: 99;
+      }
+
+      @media only screen and (max-width: 767px) {
+        header {
+          width: calc(100% - 64px);
+        }
+      }
+
+      header > img {
+        height: 32px;
+        filter: opacity(50%);
+      }
+      header > div:nth-child(2) {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        grid-template-rows: 1fr;
+        grid-column-gap: 8px;
+        grid-row-gap: 0px;
+        align-items: center;
+      }
+
+      header > div:nth-child(2) > img {
+        height: 48px;
+      }
+
+      header > div:nth-child(2) > h2 {
+        margin: 0px;
+      }
+
+      main {
+        background-color: #f9f9f9;
+        margin-top: calc(48px + 32px);
+      }
+
+      main > #intro {
+        width: calc(100% - 64px);
+        padding: 16px 32px;
+      }
+
+      main > #intro > p {
+        color: #8a8a8a;
+      }
+
+      main > .mainBox {
+        background-color: #ffffff;
+        width: calc(100% - 24px - 64px);
+        margin: 12px;
+        padding: 16px 32px;
+        box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      main > .mainBox > img {
+        width: 100%;
+      }
+
+      main > .mainBox > h3,
+      main > .mainBox > p:last-child {
+        text-align: center;
+        margin: 8px 0px;
+        font-weight: bold;
+      }
+
+      main > #ada_btns > div > div {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      main > #ada_btns > div > div > h4 {
+        margin: 0px 8px 0px 0px;
+      }
+
+      main > #ada_btns > #log {
+        background-color: #8a8a8a;
+        color: #ffffff;
+        width: 100%;
+        height: 160px;
+        border: solid 1px black;
+        border-radius: 8px;
+        text-indent: 16px;
+        overflow-y: scroll;
+      }
+
+      main > .echart {
+          position: relative;
+          z-index: -1;
+      }
+
+      footer {
+        background-color: #ffffff;
+        width: calc(100% - 64px);
+        padding: 8px 32px;
+        border-top: 1px solid black;
+      }
+
+      footer > div {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: 1fr;
+        grid-column-gap: 16px;
+        grid-row-gap: 0px;
+        align-items: center;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div></div>
+    <div>
+      <header>
+        <img src="https://freesvg.org/img/menu-icon.png" alt="" />
+        <div>
+          <h2>WinnerX D10</h2>
+          <img
+            src="https://scontent.fhan3-3.fna.fbcdn.net/v/t1.15752-9/341262637_609432384429819_8258653605093456312_n.png?_nc_cat=108&ccb=1-7&_nc_sid=ae9488&_nc_ohc=C_ep2h8jqAoAX-sP07W&_nc_ht=scontent.fhan3-3.fna&oh=03_AdRA0eYYzgzVniTty47gqAYwax7HiG8WqtD_JrjJhVDhSw&oe=6462FD34"
+            alt="winnerx-district10-brother-club"
+          />
+        </div>
+      </header>
+      <main>
+        <div id="intro">
+          <h1>Hi, Devs</h1>
+          <p>Here's what's going on with our system!</p>
+        </div>
+        <div id="ada_info" class="mainBox">
+          <h2>Your AdaFruit Info</h2>
+          <h5>ADAFRUIT_IO_USERNAME</h5>
+          <p>quang_cao2002</p>
+          <h5>ADAFRUIT_IO_KEY</h5>
+          <p id="ADAFRUIT_IO_KEY">aio_OjGd13T3YszewBSyOnk6VadobQvp</p>
+          <div id="ADAFRUIT_IO_KEY_show" class="button">Reveal</div>
+          <script>
+            document.getElementById("ADAFRUIT_IO_KEY").innerHTML = "...";
+            document
+              .getElementById("ADAFRUIT_IO_KEY_show")
+              .addEventListener("click", function () {
+                var ada_key = document.getElementById("ADAFRUIT_IO_KEY");
+                if (ada_key.innerHTML === "...") {
+                  ada_key.innerHTML = "aio_OjGd13T3YszewBSyOnk6VadobQvp";
+                } else {
+                  ada_key.innerHTML = "...";
+                }
+              });
+          </script>
+        </div>
+        <div id="ada_btns" class="mainBox">
+          <h2>Controllers</h2>
+          <div>
+            <div>
+              <h4>Button 1</h4>
+              <button id="btn1" class="button" onclick="toggleButton(this)">
+                OFF
+              </button>
+            </div>
+            <div>
+              <h4>Button 2</h4>
+              <button id="btn2" class="button" onclick="toggleButton(this)">
+                OFF
+              </button>
+            </div>
+          </div>
+          <div>
+            <h4>Frequency</h4>
+            <p id="freqval">19.11</p>
+            <input type="range" name="freq" id="freq" min="5" max="100" step="1" />
+          </div>
+          <h4>History Log</h4>
+          <div id="log">
+          </div>
+          <script>
+            var logDiv = document.getElementById("log");
+            logDiv.scrollTop = logDiv.scrollHeight;
+          </script>
+          <script>
+            function toggleButton(button) {
+              button.innerHTML = button.innerHTML === "ON" ? "OFF" : "ON";
+              button.style.backgroundColor =
+                button.innerHTML === "ON" ? "#ffffff" : "#8a8a8a";
+              button.style.color =
+                button.innerHTML === "ON" ? "black" : "#ffffff";
+            }
+          </script>
+        </div>
+        <div id="ada_temp" class="mainBox">
+          <h2>Temperature</h2>
+          <h4>Most recent value</h4>
+          <p id="lastTemp">18°C</p>
+          <h4>Line Plot</h4>
+          <div id="chart1" class="echart" style="width: 100%;height:300px;"></div>
+          <h4>Mean value</h4>
+          <p id="meanTemp">19.11</p>
+          <h4>Median value</h4>
+          <p id="medianTemp">19.11</p>
+          <h4>Standard Deviation value</h4>
+          <p id="stdTemp">19.11</p>
+          <h4>Central Tendency</h4>
+          <p id="ctlTemp">19.11</p>
+          <hr />
+          <h3>Predicted Future value</h3>
+          <p id="preTemp">19.11°C</p>
+        </div>
+        <div id="ada_humid" class="mainBox">
+          <h2>Humidity</h2>
+          <h4>Most recent value</h4>
+          <p id="lastHumi">19.11g/m<sup>3</sup></p>
+          <h4>Line Plot</h4>
+          <div id="chart2" class="echart" style="width: 100%;height:300px;"></div>
+          <h4>Mean value</h4>
+          <p id="meanHumi">19.11</p>
+          <h4>Median value</h4>
+          <p id="medianHumi">19.11</p>
+          <h4>Standard Deviation value</h4>
+          <p id="stdHumi">19.11</p>
+          <h4>Central Tendency</h4>
+          <p id="ctlHumi">19.11</p>
+          <hr />
+          <h3>Predicted Future value</h3>
+          <p id="preHumi">19.11g/m<sup>3</sup></p>
+        </div>
+        <script>
+            var temp_change = 19.11;
+            function updateTemp() {
+              fetch('/temp')
+                .then(response => response.json())
+                .then(data => {
+                  document.getElementById('lastTemp').innerHTML = data.last_temp + "°C";
+                  document.getElementById('meanTemp').innerHTML = data.mean_temp;
+                  document.getElementById('medianTemp').innerHTML = data.median_temp;
+                  document.getElementById('stdTemp').innerHTML = data.std_d_temp;
+                  document.getElementById('ctlTemp').innerHTML = data.ctl_t_temp;
+
+                  if(data.temperature_created[0] != temp_change) {
+                        const logDiv = document.getElementById("log");
+                        const logP = document.createElement("p");
+                        logP.innerHTML = data.temperature_created[0] + " TEMP: " + data.temperature[0];
+                        logDiv.appendChild(logP);
+                      temp_change = data.temperature_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+
+                const chart1 = echarts.init(document.getElementById('chart1'));
+                const option1 = {
+                  title: {
+                    text: 'Temperature over time',
+                    left: 'center',
+                  },
+                  grid: {
+                    show: true,
+                    top: 30,
+                    backgroundColor: '#F5F5F5',
+                  },
+                  tooltip: {
+                    trigger: 'axis'
+                  },
+                  xAxis: {
+                    data: data.temperature_created
+                  },
+                  yAxis: {
+                      min: Math.min(...data.temperature),
+                      max: Math.max(...data.temperature)
+                  },
+                  series: [
+                    {
+                      name: 'Temperature',
+                      type: 'line',
+                      lineStyle: {
+                        normal: {
+                          color: 'red'
+                        }
+                      },
+                      data: data.temperature
+                    }
+                  ]
+                };
+                chart1.setOption(option1);
+                chart1.group = 'group1';
+                echarts.connect('group1');
+                });
+            }
+            setInterval(updateTemp, 3000);
+
+            var humi_change = 19.11;
+            function updateHumi() {
+              fetch('/humi')
+                .then(response => response.json())
+                .then(data => {
+                  document.getElementById('lastHumi').innerHTML = data.last_humi + "g/m<sup>3</sup>";
+                  document.getElementById('meanHumi').innerHTML = data.mean_humi;
+                  document.getElementById('medianHumi').innerHTML = data.median_humi;
+                  document.getElementById('stdHumi').innerHTML = data.std_d_humi;
+                  document.getElementById('ctlHumi').innerHTML = data.ctl_t_humi;
+
+                  if(data.humidity_created[0] != humi_change) {
+                        const logDiv = document.getElementById("log");
+                        const logP = document.createElement("p");
+                        logP.innerHTML = data.humidity_created[0] + " HUMI: " + data.humidity[0];
+                        logDiv.appendChild(logP);
+                      humi_change = data.humidity_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+
+                const chart2 = echarts.init(document.getElementById('chart2'));
+                const option2 = {
+                  title: {
+                    text: 'Humidity over time',
+                    left: 'center',
+                  },
+                  grid: {
+                    show: true,
+                    top: 30,
+                    backgroundColor: '#F5F5F5',
+                  },
+                  tooltip: {
+                    trigger: 'axis'
+                  },
+                  xAxis: {
+                    data: data.humidity_created
+                  },
+                  yAxis: {
+                      min: Math.min(...data.humidity),
+                      max: Math.max(...data.humidity)
+                  },
+                  series: [
+                    {
+                      name: 'Humidity',
+                      type: 'line',
+                      lineStyle: {
+                        normal: {
+                          color: 'blue'
+                        }
+                      },
+                      data: data.humidity
+                    }
+                  ]
+                };
+                chart2.setOption(option2);
+                chart2.group = 'group2';
+                echarts.connect('group2');
+                });
+            }
+            setInterval(updateHumi, 3000);
+
+            function updatePredict() {
+              fetch('/predict')
+                .then(response => response.json())
+                .then(data => {
+                  document.getElementById('preTemp').innerHTML = data.prdt_temp + "°C";
+                  document.getElementById('preHumi').innerHTML = data.prdt_humi + "g/m<sup>3</sup>";
+                });
+            }
+            setInterval(updatePredict, 60000);
+
+            var btn1_change = 19.11
+            var btn2_change = 19.11
+            function updateBtn() {
+              fetch('/btn1')
+                .then(response => response.json())
+                .then(data => {
+                    let button = document.getElementById('btn1')
+                  button.innerHTML = data.last_btn1;
+                  button.innerHTML = button.innerHTML === "0" ? "OFF" : "ON";
+                  button.style.backgroundColor = button.innerHTML === "ON" ? "#ffffff" : "#8a8a8a";
+                  button.style.color = button.innerHTML === "ON" ? "black" : "#ffffff";
+
+                  if(data.btn1_created[0] != btn1_change) {
+                        const logDiv = document.getElementById("log");
+                        const logP = document.createElement("p");
+                        logP.innerHTML = data.btn1_created[0] + " BTN1: " + data.btn1[0];
+                        logDiv.appendChild(logP);
+                      btn1_change = data.btn1_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+                });
+              fetch('/btn2')
+                .then(response => response.json())
+                .then(data => {
+                    let button = document.getElementById('btn2')
+                  button.innerHTML = data.last_btn2;
+                  button.innerHTML = button.innerHTML === "0" ? "OFF" : "ON";
+                  button.style.backgroundColor = button.innerHTML === "ON" ? "#ffffff" : "#8a8a8a";
+                  button.style.color = button.innerHTML === "ON" ? "black" : "#ffffff";
+
+                  if(data.btn2_created[0] != btn2_change) {
+                        const logDiv = document.getElementById("log");
+                        const logP = document.createElement("p");
+                        logP.innerHTML = data.btn2_created[0] + " BTN2: " + data.btn2[0];
+                        logDiv.appendChild(logP);
+                      btn2_change = data.btn2_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+                });
+            }
+            setInterval(updateBtn, 3000);
+
+            var freq_change = 19.11
+            function updateFreq() {
+              fetch('/freq')
+                .then(response => response.json())
+                .then(data => {
+                  document.getElementById('freq').value = data.last_freq;
+                  document.getElementById('freqval').innerHTML = data.last_freq;
+
+                  if(data.freq_created[0] != freq_change) {
+                      const logDiv = document.getElementById("log");
+                      const logP = document.createElement("p");
+                      logP.innerHTML = data.freq_created[0] + " FREQ: " + data.freq[0];
+                      logDiv.appendChild(logP);
+                      freq_change = data.freq_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+                });
+            }
+            setInterval(updateFreq, 3000);
+
+            var erro_change = 19.11
+            function updateErro() {
+              fetch('/erro')
+                .then(response => response.json())
+                .then(data => {
+                  if(data.erro_created[0] != erro_change) {
+                      const logDiv = document.getElementById("log");
+                      const logP = document.createElement("p");
+                      logP.innerHTML = data.erro_created[0] + " ERROR: " + data.erro[0];
+                      logDiv.appendChild(logP);
+                      erro_change = data.erro_created[0];
+                      logDiv.scrollTop = logDiv.scrollHeight;
+                  }
+                });
+            }
+            setInterval(updateFreq, 3000);
+        </script>
+      </main>
+      <footer>
+        <div>
+          <h4>Developer(s)</h4>
+          <p>
+            <a
+              href="https://scontent.fhan4-2.fna.fbcdn.net/v/t1.15752-9/313218348_3264297373813206_5850094739383157825_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=ae9488&_nc_ohc=Xf_kvlF2rZMAX86f9Q7&_nc_ht=scontent.fhan4-2.fna&oh=03_AdTzhvm0f6_XpDyruPBXf56-2NAJiMgyLXWlJcb2Xd10EA&oe=646316E5"
+              >Winner X District 10 Brother Libre Club</a
+            >
+          </p>
+        </div>
+        <div>
+          <h4>Initial release</h4>
+          <p>16 - 04 - 2023</p>
+        </div>
+        <div>
+          <h4>Repository</h4>
+          <p>
+            <a
+              href="https://scontent.fhan3-5.fna.fbcdn.net/v/t1.15752-9/318084426_5663633393733229_8341961371307645842_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=ae9488&_nc_ohc=EqfzyLqi0OsAX9WhLKU&_nc_ht=scontent.fhan3-5.fna&oh=03_AdT_3RTZ9JsJXrJ6Eiru1G1mLLuvcjoqEAvC_WWKJqKCeQ&oe=64634B10"
+              >iot_ml</a
+            >
+            on Github
+          </p>
+        </div>
+        <div>
+          <h4>Written in</h4>
+          <p>Python - HTML5 - CSS3 - ES2022</p>
+        </div>
+        <div>
+          <h4>Server</h4>
+          <p><a href="https://www.pythonanywhere.com/">PythonAnywhere</a></p>
+        </div>
+        <div>
+          <h4>Available in</h4>
+          <p>English</p>
+        </div>
+        <div>
+          <h4>License</h4>
+          <p>© Ông Đặng 2023</p>
+        </div>
+      </footer>
+    </div>
+    <div></div>
+  </body>
+</html>
