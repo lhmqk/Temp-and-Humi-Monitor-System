@@ -1,13 +1,9 @@
-from flask import Flask, jsonify, request, render_template, url_for
+from flask import Flask, jsonify, request, render_template
 import time, datetime
-import os
 import pandas as pd
 import numpy as np
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
-import matplotlib.pyplot as plt
-import io
-import base64
 
 app = Flask(__name__,static_folder='/home/lhmqk/mysite/static/', template_folder='/home/lhmqk/mysite/templates/')
 app.config['SERVER_NAME'] = 'lhmqk.pythonanywhere.com'
@@ -19,32 +15,6 @@ def get_ctl_text(mean, median, std_d, data_type):
         return f"{data_type} data is positively skewed"
     else:
         return f"{data_type} data is negatively skewed"
-def create_plot(data_x, data_y, color, title, xlabel, ylabel, filename):
-    plt.clf()
-    plt.close()
-    data_x = pd.to_datetime(data_x, format="%H:%M:%S")
-    plt.plot(data_x, data_y, color=color)
-    plt.fill_between(data_x, data_y, color=color, alpha=0.2)
-    plt.ylim(min(data_y) - 1, max(data_y) + 1)
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.xticks(range(0, len(data_x), 4), rotation=90, fontsize=8)
-    # Save the plot as a PNG image
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format="png")
-    buffer.seek(0)
-    # Encode the image in base64
-    plt_encoded = base64.b64encode(buffer.getvalue()).decode()
-    # Save the encoded image data to a file
-    img_path = os.path.join(app.static_folder, filename)
-    with open(img_path, 'wb') as f:
-        f.write(base64.b64decode(plt_encoded))
-    buffer.truncate(0)
-    with app.app_context():
-        # Render the HTML template with a reference to the image file
-        plt_url = url_for('static', filename=filename)
-    return plt_url
 
 class Temp:
     def __init__(self):
@@ -274,35 +244,3 @@ if __name__ == "__main__":
     while True:
         app.run(debug=True, threaded=True)
         time.sleep(1)
-
-
-# # Scatter
-# plt.clf()
-# plt.close()
-# plt.figure()
-# plt.scatter(self.humidity, self.temperature, color="red")
-# plt.xlabel("Humidity")
-# plt.ylabel("Temperature")
-# plt.title("Temp and Humid against each other")
-# plt.xticks(rotation=90)
-# plt.yticks(fontsize=24)
-# plt.plot(self.humidity, self.temperature, color="blue", ls="--")
-# # Save the plot as a PNG image
-# buffer = io.BytesIO()
-# plt.savefig(buffer, format="png")
-# buffer.seek(0)
-
-# # Encode the image in base64
-# plt_scatter_encoded = base64.b64encode(buffer.getvalue()).decode()
-# # Save the encoded image data to a file
-# img_filename = 'plt_scatter.png'
-# img_path = os.path.join(app.static_folder, img_filename)
-# with open(img_path, 'wb') as f:
-#     f.write(base64.b64decode(plt_scatter_encoded))
-# buffer.truncate(0)
-# with app.app_context():
-#     # Render the HTML template with a reference to the image file
-#     self.plt_scatter = url_for('static', filename=img_filename)
-
-# plt.clf()
-# plt.close()
