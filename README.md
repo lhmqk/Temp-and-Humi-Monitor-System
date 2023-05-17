@@ -1,2 +1,2 @@
-# IoT_ML
-Machine Learning using Python libraries to predict the near future temperature and humidity of the surrounding atmosphere by the previous data.
+# Temperature-and-Humidity-Monitor-System-for-Household
+The present study details the development and deployment of an Internet of Things (IoT) monitoring system, designed to capture and report on room temperature and humidity levels. The system is further augmented by a mobile application, which enables supervisory control and management of the IoT server. Additionally, a machine learning (ML) model has been integrated into the system, allowing for the prediction of future values for temperature, humidity, and usage. The IoT server has been implemented in-house, and is capable of supporting the aforementioned functionalities.
